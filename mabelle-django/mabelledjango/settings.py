@@ -51,7 +51,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "mabelleweb.urls"
+ROOT_URLCONF = "mabelledjango.urls"
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "mabelleweb.wsgi.application"
+WSGI_APPLICATION = "mabelledjango.wsgi.application"
 
 
 # Database
