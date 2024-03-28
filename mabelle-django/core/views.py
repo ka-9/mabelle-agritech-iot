@@ -12,16 +12,17 @@ def create_npk_object(request):
 
     if data:
         for obj in data:
-            value_updated_at = obj.value_updated_at
             npk_values.append(obj.last_value)
             
         # Create NPK object with the extracted attributes
         npk_obj = NPKReading.objects.create(
-            timestamp = value_updated_at,
+            timestamp = data[0].value_updated_at,
             nitrogen_level = npk_values[0],
             phosphorus_level = npk_values[1],
             potassium_level = npk_values[2]
         )
+
+        print(npk_obj.timestamp)
 
         return JsonResponse({'message': 'NPK objects created successfully'}, status=200)
     else:
