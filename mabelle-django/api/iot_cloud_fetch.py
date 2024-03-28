@@ -64,11 +64,12 @@ def fetch_data(access_token):
         print("Got an exception: {}".format(e))
 
     if data:
-        for obj in data:
-            value_updated_at = obj.value_updated_at
-            last_value = obj.last_value
-            name = obj.name
-            print(f"Name: {name}, Last Value: {last_value}, Value Updated At: {value_updated_at}")
+        return data
+        # for obj in data:
+        #     value_updated_at = obj.value_updated_at
+        #     last_value = obj.last_value
+        #     name = obj.name
+        #     print(f"Name: {name}, Last Value: {last_value}, Value Updated At: {value_updated_at}")
 
 
 # Code testing

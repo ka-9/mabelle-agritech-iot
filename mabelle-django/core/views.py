@@ -5,7 +5,7 @@ from api.iot_cloud_fetch import get_access_token, fetch_data
 
 access_token = get_access_token()
 
-def create_npk_objects(request):
+def create_npk_object(request):
     data = fetch_data(access_token)
 
     npk_values = []

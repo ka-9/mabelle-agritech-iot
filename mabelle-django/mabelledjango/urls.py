@@ -16,7 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static
+from django.urls import path, include
+from django.conf import settings
+from core import views
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path('', views.create_npk_object, name='create_npk_object'),
+    path('create_npk_object/', views.create_npk_object, name='create_npk_object'),
 ]
+
+admin.site.site_header = "MABELLE"
+admin.site.site_title = "MABELLE ADMINISTRATION"
+admin.site.index_title = "ADMINISTARTION"
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
