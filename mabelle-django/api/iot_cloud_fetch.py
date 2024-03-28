@@ -7,7 +7,8 @@ import os
 
 load_dotenv()
 
-if __name__ == '__main__':
+# This method generates the access token so that we can interact with cloud (DO NOT TOUCH, thank you)
+def get_access_token():
     # Define token endpoint and credentials
     token_url = "https://api2.arduino.cc/iot/v1/clients/token"
     client_id = os.environ['CLIENT_ID']
@@ -43,6 +44,12 @@ if __name__ == '__main__':
     else:
         print("Token request failed with status code:", response.status_code)
 
+    return access_token
+
+
+# This method fetches data from the iot cloud using the generated access token
+def fetch_data(access_token):
+
     client_config = Configuration(host="https://api2.arduino.cc/iot")
     client_config.access_token = access_token
     client = iot.ApiClient(client_config)
@@ -52,7 +59,20 @@ if __name__ == '__main__':
 
     # Here is the code to fetch the Thing
     try:
-        resp = api.properties_v2_list(thing_id)
-        print(resp)
+        data = api.properties_v2_list(thing_id)
     except ApiException as e:
         print("Got an exception: {}".format(e))
+
+    if data:
+        for obj in data:
+            value_updated_at = obj.value_updated_at
+            last_value = obj.last_value
+            name = obj.name
+            print(f"Name: {name}, Last Value: {last_value}, Value Updated At: {value_updated_at}")
+
+
+# Code testing
+if __name__ == '__main__':
+    access_token = get_access_token()
+    for i in range(1): # Adjust for loop for as many readings as needed per method call!
+        fetch_data(access_token)
