@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import NPKReading
+from .models import Reading
 
 # Register your models here.
 
-admin.site.register(NPKReading)
+admin.site.register(Reading)
