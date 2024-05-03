@@ -1,8 +1,10 @@
 import streamlit as st
 import pandas as pd
 import plost
-from utils import *
 from django.templatetags.static import static
+from utils import *
+
+access_token = get_access_token()
 
 data = {
     'NPK': ['N', 'P', 'K'],
@@ -32,6 +34,14 @@ with st.sidebar:
             st.write("### Form submitted!")
             st.write("Seed input:", seed_user_input)
             st.write("Selected distance:", distance_user_input)
+
+            # Send dashboard info to Arduino Cloud IOT
+            ids = load_dashboard_ids()
+            to_return = [motors_on, seed_user_input, distance_user_input]
+
+            for i in range(len(ids)):
+                post_data(access_token, ids[i], to_return[i])
+
 
     st.subheader('Heat map parameter')
     time_hist_color = st.selectbox('Color by', ('temp_min', 'temp_max')) 

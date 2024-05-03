@@ -26,6 +26,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', views.create_npk_object, name='create_npk_object'),
     path('create_npk_object/', views.create_npk_object, name='create_npk_object'),
+    path('run_inferrence/', views.run_inferrence, name='run_inferrence'),
 ]
 
 admin.site.site_header = "MABELLE"

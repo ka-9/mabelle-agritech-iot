@@ -8,6 +8,8 @@ import os
 
 load_dotenv()
 
+
+
 # This method generates the access token so that we can interact with cloud (DO NOT TOUCH, thank you)
 def get_access_token():
     # Define token endpoint and credentials
@@ -57,7 +59,7 @@ async def fetch_data(access_token):
     thing_id = os.environ['THING_ID']
     api = iot.PropertiesV2Api(client)
     
-    data = ""
+    # data = ""
 
     try:
         # Fetch the Thing asynchronously
@@ -68,7 +70,7 @@ async def fetch_data(access_token):
 
     return data
 
-def post_data(access_token, property_name, property_value):
+def post_data(access_token, property_id, property_value):
     # Configure the Arduino IoT client
     client_config = Configuration(host="https://api2.arduino.cc/iot")
     client_config.access_token = access_token
@@ -76,25 +78,28 @@ def post_data(access_token, property_name, property_value):
 
     thing_id = os.environ['THING_ID']
 
-    # Initialize the PropertiesV2Api
-    api = iot.PropertiesV2Api(client)
+    # # Get information about specific property to update (ID)
+    # device_api = iot.DevicesV2Api(client)
+    # response = device_api.devices_v2_show(os.environ['DEVICE_ID'])
+    # print(response)
 
-    pid = property_name
-    model_property = iot.ModelProperty() # ModelProperty | PropertyPayload describes a property of a thing. No field is mandatory
-
-    print(model_property)
+    properties_api = iot.PropertiesV2Api(client)
 
     try:
-        # update properties_v2
-        api_response = api.properties_v2_update(thing_id, pid, model_property)
-        print(api_response)
-    except ApiException as e:
-        print("Exception when calling PropertiesV2Api->properties_v2_update: %s\n" % e)
+        properties_api.properties_v2_publish(thing_id, property_id, {"value" : property_value})
+        print(f"Published {property_value} to {property_id}")
+    except iot.ApiException as e:
+        print("Got an exception: {}".format(e))
+        return None
+
 
 # Code testing
 if __name__ == '__main__':
     access_token = get_access_token()
-    post_data(access_token, 'Seed', 10)
+
+    pid = '3bc2aa41-143a-44aa-aac4-9e2309086e3a'
+    post_data(access_token, pid, 22)
+
     # async def main():
     #     for i in range(1):  # Adjust for loop for as many readings as needed per method call
     #         data = await fetch_data(access_token)
