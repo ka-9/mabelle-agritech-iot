@@ -97,11 +97,11 @@ def post_data(access_token, property_id, property_value):
 if __name__ == '__main__':
     access_token = get_access_token()
 
-    pid = '3bc2aa41-143a-44aa-aac4-9e2309086e3a'
-    post_data(access_token, pid, 22)
+    pid = '493dfd11-d1d1-4fdd-a973-f874ef993542'
+    post_data(access_token, pid, 1)
 
-    # async def main():
-    #     for i in range(1):  # Adjust for loop for as many readings as needed per method call
-    #         data = await fetch_data(access_token)
-    #         print(data)
-    # asyncio.run(main())
+    async def main():
+        for i in range(1):  # Adjust for loop for as many readings as needed per method call
+            data = await fetch_data(access_token)
+            print(data)
+    asyncio.run(main())
