@@ -53,6 +53,19 @@ with st.sidebar:
     plot_data = st.multiselect('Select Data', ['Temperature', 'Humidity'], ['Temperature', 'Humidity'])
     plot_height = st.slider('Specify plot height', 200, 500, 350) 
 
+    # Streamlit app to export the data
+    st.info("Click the button below to export the Readings data to a PDF.")
+
+    if st.button('Export to PDF'):
+        query = "SELECT * FROM core_reading"
+        df = pd.read_sql_query(query, conn)
+        filename = 'readings_data.pdf'
+        create_pdf(df, filename)
+        st.write(f"Exported data to {filename}.")
+
+        with open(filename, 'rb') as f:
+            st.download_button('Download PDF', f, file_name=filename, mime='application/pdf')
+
 # Execute SQL queries
 c.execute('SELECT * FROM core_reading ORDER BY timestamp DESC LIMIT 1;')
 db_data = c.fetchall()

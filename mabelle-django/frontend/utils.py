@@ -4,6 +4,7 @@ import requests
 import iot_api_client as iot
 from iot_api_client.rest import ApiException
 from iot_api_client.configuration import Configuration
+from fpdf import FPDF
 
 load_dotenv()
 
@@ -79,3 +80,34 @@ def post_data(access_token, property_id, property_value):
     except iot.ApiException as e:
         print("Got an exception: {}".format(e))
         return None
+    
+# Function to create a PDF from the DataFrame
+def create_pdf(df, filename):
+    pdf = FPDF(orientation='L')
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.set_left_margin(10)
+    pdf.set_right_margin(10)
+
+    pdf.add_page()
+    pdf.set_font("Arial", size=8)
+
+    # Add table headers
+    pdf.cell(0, 10, 'core_readings Table Data', ln=True, align='C')
+    pdf.ln(10)
+    col_width = pdf.w / (len(df.columns) + 1)
+    row_height = 10
+
+    for column in df.columns:
+        pdf.cell(col_width, row_height, column, border=1, align='C')
+    pdf.ln(row_height)
+
+    # Add data rows
+    for index, row in df.iterrows():
+        for col in row:
+            col = str(col)
+            if len(col) > 15: 
+                col = col[:15] + '\n' + col[15:]
+            pdf.cell(col_width, row_height, col, border=1, align='C')
+        pdf.ln(row_height)
+
+    pdf.output(filename)
