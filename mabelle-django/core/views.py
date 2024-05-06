@@ -26,7 +26,10 @@ def create_npk_object(request):
         "Temperature": 0,
     }
 
-    if data:
+    while not data:
+        continue
+
+    try:
         for obj in data:
             if(obj.name in npk_t_h_values.keys()):
                 npk_t_h_values[obj.name] = obj.last_value
@@ -44,8 +47,8 @@ def create_npk_object(request):
         )
 
         return JsonResponse({'message': f'Objects created successfully {npk_obj}'}, status=200)
-    else:
-        return JsonResponse({'message': 'No data available'}, status=404)
+    except Exception as e:
+        return JsonResponse({'message': f'No data available, {e}'}, status=404)
 
 
 def run_inferrence(request):
@@ -78,8 +81,8 @@ def run_inferrence(request):
 
     try: 
         outputs = ort_session.run(None, {'input': x})
-        # Flatten the array and extract all values as floats
-        output_values = [float(value) for sublist in outputs for arr in sublist for value in arr]
+        # Flatten the array and extract all values as rounded ints
+        output_values = [int(round(value)) for sublist in outputs for arr in sublist for value in arr]
         to_return = [output_values[1], output_values[3], output_values[5], output_values[6]]
 
         # Send NPKW data to Arduino Cloud
