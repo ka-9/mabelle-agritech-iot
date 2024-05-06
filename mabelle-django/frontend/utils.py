@@ -108,3 +108,17 @@ def create_pdf(df, filename):
         pdf.ln(row_height)
 
     pdf.output(filename)
+
+# Function to auto refresh URLs
+def auto_refresh_urls():
+    urls = [
+        "http://127.0.0.1:8000/",
+        "http://127.0.0.1:8000/run_inferrence",
+        "http://localhost:8501/"
+    ]
+    for url in urls:
+        try:
+            requests.get(url)
+            print('Refreshing...')
+        except Exception as e:
+            print(f"Failed to auto refresh: {url} - {e}")

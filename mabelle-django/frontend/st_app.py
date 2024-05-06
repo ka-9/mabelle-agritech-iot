@@ -34,7 +34,8 @@ with st.sidebar:
         submitted = st.form_submit_button("Submit")
         if submitted:
             motors_on = True
-            st.write("### Form submitted!")
+            auto_refresh_urls()
+            st.success("### Form submitted!")
             st.write("Seed input:", seed_user_input)
             st.write("Selected distance:", distance_user_input)
 
@@ -56,7 +57,7 @@ with st.sidebar:
     # Streamlit app to export the data
     st.info("Click the button below to export the Readings data to a PDF.")
 
-    if st.button('Export to PDF'):
+    if st.button('Export Results'):
         query = "SELECT * FROM core_reading"
         df = pd.read_sql_query(query, conn)
         filename = 'readings_data.pdf'
