@@ -104,10 +104,7 @@ def create_pdf(df, filename):
     # Add data rows
     for index, row in df.iterrows():
         for col in row:
-            col = str(col)
-            if len(col) > 15: 
-                col = col[:15] + '\n' + col[15:]
-            pdf.cell(col_width, row_height, col, border=1, align='C')
+            pdf.cell(col_width, row_height, str(col), border=1, align='C')
         pdf.ln(row_height)
 
     pdf.output(filename)
