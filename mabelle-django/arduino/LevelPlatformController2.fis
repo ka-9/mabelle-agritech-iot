@@ -1,0 +1,63 @@
+[System]
+Name='LevelPlatformController2'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=3
+NumRules=9
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='Pitch Angle'
+Range=[-30 30]
+NumMFs=3
+MF1='Negative':'trapmf',[-52.5 -32.5 -27.5 0]
+MF2='Level':'trimf',[-8 0 8]
+MF3='Positive':'trapmf',[0 27.5 32.5 52.5]
+
+[Input2]
+Name='Roll Angle'
+Range=[-30 30]
+NumMFs=3
+MF1='Negative':'trapmf',[-52.5 -32.5 -27.5 0]
+MF2='Level':'trimf',[-6 0 6]
+MF3='Positive':'trapmf',[0 27.5 32.5 52.5]
+
+[Output1]
+Name='Servo1'
+Range=[0 90]
+NumMFs=3
+MF1='Low':'trapmf',[-33.75 -3.75 3.75 33.75]
+MF2='Level':'trimf',[7.5 45 82.5]
+MF3='High':'trapmf',[56.25 86.25 93.75 123.8]
+
+[Output2]
+Name='Servo2'
+Range=[0 90]
+NumMFs=3
+MF1='Low':'trapmf',[-33.75 -3.75 3.75 33.75]
+MF2='Level':'trimf',[7.5 45 82.5]
+MF3='High':'trapmf',[56.25 86.25 93.75 123.8]
+
+[Output3]
+Name='Servo3'
+Range=[0 90]
+NumMFs=3
+MF1='Low':'trapmf',[-33.75 -3.75 3.75 33.75]
+MF2='Level':'trimf',[7.5 45 82.5]
+MF3='High':'trapmf',[56.25 86.25 93.75 123.8]
+
+[Rules]
+1 1, 2 2 1 (1) : 1
+2 1, 3 1 1 (1) : 1
+3 1, 2 1 2 (1) : 1
+1 2, 2 3 1 (1) : 1
+2 2, 2 2 2 (1) : 1
+3 2, 2 1 3 (1) : 1
+1 3, 2 3 2 (1) : 1
+2 3, 1 3 3 (1) : 1
+3 3, 2 2 3 (1) : 1
