@@ -3,27 +3,16 @@
 #include "thingProperties.h"
 #include <SoftwareSerial.h>
 #include <Servo.h>
-#include <Wire.h>
 
 #define DHTTYPE DHT11
 #define DHTPIN 4
-#define enA 10
-#define enB 11
-#define enPump 12
+#define en 5
 #define in1 A0
 #define in2 A1
 #define in3 A2
 #define in4 A3
 #define NPKServo 6
 #define plantServo 9
-
-#define RE 8
-#define DE 7
-
-// Modbus RTU requests for reading NPK values
-const byte nitro[] = {0x01,0x03, 0x00, 0x1e, 0x00, 0x01, 0xe4, 0x0c};
-const byte phos[] = {0x01,0x03, 0x00, 0x1f, 0x00, 0x01, 0xb5, 0xcc};
-const byte pota[] = {0x01,0x03, 0x00, 0x20, 0x00, 0x01, 0x85, 0xc0};
 
 // Declare global variables here
 // int nitrogen = 20;
@@ -49,64 +38,44 @@ byte values[11];
 
 void setup() {
     Serial.begin(9600);
-    pinMode(enA, OUTPUT);
-    pinMode(enB, OUTPUT);  
+    pinMode(en, OUTPUT);
     pinMode(in1, OUTPUT);
     pinMode(in2, OUTPUT);
     pinMode(in3, OUTPUT);
     pinMode(in4, OUTPUT);
-    pinMode(enPump, OUTPUT);
-    mod.begin(9600);
-
-    // Define pin modes for RE and DE
-    pinMode(RE, OUTPUT);
-    pinMode(DE, OUTPUT);
-     movingDelay = 0;
-  
-  delay(500);
 
     plantArm.attach(plantServo);
     NPKArm.attach(NPKServo);
     plantedSeeds = 0;
     dht.begin();  // Initialize the DHT sensor
+
     initProperties();
     ArduinoCloud.begin(ArduinoIoTPreferredConnection);
-    
+
     setDebugMessageLevel(2);
     ArduinoCloud.printDebugInfo();
 }
 
 void loop() {
     ArduinoCloud.update();
-    
-    byte val1,val2,val3;
-   
+
     humidity = dht.readHumidity();
     temperature = dht.readTemperature();
     Serial.print("Flag: ");
         Serial.println(flag);
-  delay(1000);
- 
+
+  
+  
     // Planting logic example
-  if(flag){
-    
-   
-    if (plantedSeeds < seeds) {
-       movingDelay = (distance/seeds)*100;
-       Serial.print("movingDelay: ");
-        Serial.println(movingDelay);
+    if (flag && plantedSeeds < seeds) {
         Serial.print("Planted seeds ");
         Serial.println(plantedSeeds);
         if (plantedSeeds % 3 == 0) {
             NPKArm.write(70);
             delay(4000);
-            nitrogen = fetchNitrogen();
-            delay(250);
-            phosphorus = fetchPhosphorous();
-            delay(250);
-            potassium = fetchPotassium();
-            delay(250);
-            
+            nitrogen = random(0, 110);
+            potassium = random(0, 25);
+            phosphorus = random(0, 32);
             Serial.print(" Nitrogen: ");
             Serial.println(nitrogen);
             Serial.print(" Potassium: ");
@@ -116,22 +85,22 @@ void loop() {
             // Determine water needs based on neededWater
             switch (neededWater) {
                 case 1:
-                pumpDelay = 1000;
+                pumpDelay = 100;
                 break;
                 case 2:
-                pumpDelay = 1500;
+                pumpDelay = 200;
                 break;
                 case 3:
-                pumpDelay = 2000;
+                pumpDelay = 300;
                 break;
                 case 4:
-                pumpDelay = 2000;
+                pumpDelay = 400;
                 break;
                 case 5:
-                pumpDelay = 3000;
+                pumpDelay = 500;
                 break;
                 default:
-                pumpDelay = 500;
+                pumpDelay = 0;
             }
         }
 
@@ -139,50 +108,40 @@ void loop() {
         Serial.print("pumpDelay: ");
         Serial.println(pumpDelay);
 
-        plantArm.write(0);
+        plantArm.write(70);
         Serial.println("Planting arm down");
-        delay(1000);
         Serial.println("turning pump on");
         pumpOn();
         delay(pumpDelay);
         pumpOff();
         Serial.println("turning pump off");
         Serial.println("Planting arm up");
-        delay(1000);
-        plantArm.write(90);
+        plantArm.write(0);
         NPKArm.write(0);
-        delay(500);
-        Serial.println("Moving forward");
-        moveFWD(movingDelay);
-        brakeMotor();
+        moveFWD();
+        delay(10); // Adjust delay according to movement speed
         plantedSeeds++;
-       
+        brakeMotor();
       
     } else { // Stop working, planting is done or flag is set to 0
 
         Serial.println("Planted seeds are done! going back");
         plantedSeeds = 0;
         flag = false;
+        backward();
         delay(10); // Adjust delay based on overall distance
-        backward(movingDelay*seeds);
         brakeMotor();
     }
-  }else{
-   brakeMotor();
-   
-  }
     
 }
 
 
-void moveFWD(int duration) {
-     analogWrite(enA,100);
-    analogWrite (enB, 100);
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, HIGH);
-    digitalWrite(in3, LOW);
-    digitalWrite(in4, HIGH);
-    delay(duration);
+void moveFWD() {
+    analogWrite(en, 255);
+    digitalWrite(in1, HIGH);
+    digitalWrite(in2, LOW);
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW);
 }
 
 void brakeMotor() {
@@ -192,22 +151,20 @@ void brakeMotor() {
     digitalWrite(in4, LOW);
 }
 
-void backward( int duration) {
-    analogWrite(enA, 100);
-    analogWrite(enB, 100);
+void backward() {
+    analogWrite(en, 255);
     digitalWrite(in1, HIGH);
     digitalWrite(in2, LOW);
     digitalWrite(in3, HIGH);
     digitalWrite(in4, LOW);
-    delay(duration);
 }
 
 void pumpOn() {
-    digitalWrite(enPump, HIGH);
+  // Implement logic to activate the pump
 }
 
 void pumpOff() {
-    digitalWrite(enPump, LOW);
+  // Implement logic to deactivate the pump
 }
 
 /* Add the onChange functions */
@@ -277,83 +234,4 @@ void onShlekChange() {
 
 void onShrek2Change() {
   // Add your code here to act upon Shrek2 change
-}
-
-byte fetchNitrogen(){
-  digitalWrite(DE,HIGH);
-  digitalWrite(RE,HIGH);
-  delay(10);
-  if(mod.write(nitro,sizeof(nitro))==8){
-    digitalWrite(DE,LOW);
-    digitalWrite(RE,LOW);
-    for(byte i=0;i<7;i++){
-    //Serial.print(mod.read(),HEX);
-    values[i] = mod.read();
-    Serial.print(values[i],HEX);
-    }
-    Serial.println();
-  }
-  return values[4];
-}
- 
-byte fetchPhosphorous(){
-  digitalWrite(DE,HIGH);
-  digitalWrite(RE,HIGH);
-  delay(10);
-  if(mod.write(phos,sizeof(phos))==8){
-    digitalWrite(DE,LOW);
-    digitalWrite(RE,LOW);
-    for(byte i=0;i<7;i++){
-    //Serial.print(mod.read(),HEX);
-    values[i] = mod.read();
-    Serial.print(values[i],HEX);
-    }
-    Serial.println();
-  }
-  return values[4];
-}
- 
-byte fetchPotassium(){
-  digitalWrite(DE,HIGH);
-  digitalWrite(RE,HIGH);
-  delay(10);
-  if(mod.write(pota,sizeof(pota))==8){
-    digitalWrite(DE,LOW);
-    digitalWrite(RE,LOW);
-    for(byte i=0;i<7;i++){
-    //Serial.print(mod.read(),HEX);
-    values[i] = mod.read();
-    Serial.print(values[i],HEX);
-    }
-    Serial.println();
-  }
-  return values[4];
-}
-/*
-  Since NeededN is READ_WRITE variable, onNeededNChange() is
-  executed every time a new value is received from IoT Cloud.
-*/
-void onNeededNChange()  {
-  // Add your code here to act upon NeededN change
-}
-/*
-  Since NeededP is READ_WRITE variable, onNeededPChange() is
-  executed every time a new value is received from IoT Cloud.
-*/
-void onNeededPChange()  {
-  // Add your code here to act upon NeededP change
-}
-/*
-  Since NeededK is READ_WRITE variable, onNeededKChange() is
-  executed every time a new value is received from IoT Cloud.
-*/
-void onNeededKChange()  {
-  // Add your code here to act upon NeededK change
-}
-/*
-  Since MovingDelay is READ_WRITE variable, onMovingDelayChange() is
-  executed every time a new value is received from IoT Cloud.
-*/
-void onMovingDelayChange()  {
-  // Add your code here to act upon MovingDelay change
 }

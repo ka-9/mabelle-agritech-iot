@@ -8,9 +8,10 @@ const char PASS[]     = SECRET_OPTIONAL_PASS;    // Network password (use for WP
 
 void onDistanceChange();
 void onHumidityChange();
-void onNeededNitrogenChange();
-void onNeededPhosphorusChange();
-void onNeededPotassiumChange();
+void onMovingDelayChange();
+void onNeededKChange();
+void onNeededNChange();
+void onNeededPChange();
 void onNeededWaterChange();
 void onNitrogenChange();
 void onPhosphorusChange();
@@ -22,9 +23,10 @@ void onFlagChange();
 
 int distance;
 int humidity;
-int NeededNitrogen;
-int neededPhosphorus;
-int neededPotassium;
+int movingDelay;
+int neededK;
+int neededN;
+int neededP;
 int neededWater;
 int nitrogen;
 int phosphorus;
@@ -38,10 +40,11 @@ void initProperties(){
 
   ArduinoCloud.addProperty(distance, READWRITE, ON_CHANGE, onDistanceChange);
   ArduinoCloud.addProperty(humidity, READWRITE, ON_CHANGE, onHumidityChange);
-  ArduinoCloud.addProperty(NeededNitrogen, READWRITE, ON_CHANGE, onNeededNitrogenChange, 0.1);
-  ArduinoCloud.addProperty(neededPhosphorus, READWRITE, ON_CHANGE, onNeededPhosphorusChange);
-  ArduinoCloud.addProperty(neededPotassium, READWRITE, ON_CHANGE, onNeededPotassiumChange);
-  ArduinoCloud.addProperty(neededWater, READWRITE, ON_CHANGE, onNeededWaterChange);
+  ArduinoCloud.addProperty(movingDelay, READWRITE, ON_CHANGE, onMovingDelayChange);
+  ArduinoCloud.addProperty(neededK, READWRITE, 10 * SECONDS, onNeededKChange);
+  ArduinoCloud.addProperty(neededN, READWRITE, ON_CHANGE, onNeededNChange);
+  ArduinoCloud.addProperty(neededP, READWRITE, ON_CHANGE, onNeededPChange);
+  ArduinoCloud.addProperty(neededWater, READWRITE, 10 * SECONDS, onNeededWaterChange);
   ArduinoCloud.addProperty(nitrogen, READWRITE, ON_CHANGE, onNitrogenChange);
   ArduinoCloud.addProperty(phosphorus, READWRITE, ON_CHANGE, onPhosphorusChange);
   ArduinoCloud.addProperty(plantedSeeds, READWRITE, ON_CHANGE, onPlantedSeedsChange);
