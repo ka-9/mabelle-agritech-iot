@@ -114,7 +114,8 @@ def auto_refresh_urls():
     urls = [
         "http://127.0.0.1:8000/",
         "http://127.0.0.1:8000/run_inferrence",
-        "http://localhost:8501/"
+        "http://localhost:8501/",
+        "http://127.0.0.1:8000/",
     ]
     for url in urls:
         try:

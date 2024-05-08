@@ -39,11 +39,11 @@ def create_npk_object(request):
         # Create NPK object with the extracted attributes
         npk_obj = Reading.objects.create(
             timestamp = data[0].value_updated_at,
-            humidity = npk_t_h_values['Humidity'],
-            nitrogen_level = npk_t_h_values['Nitrogen'],
-            phosphorus_level = npk_t_h_values['Phosphorus'],
-            potassium_level = npk_t_h_values['Potassium'],
-            temperature = npk_t_h_values['Temperature'],
+            humidity = npk_t_h_values['humidity'],
+            nitrogen_level = npk_t_h_values['nitrogen'],
+            phosphorus_level = npk_t_h_values['phosphorus'],
+            potassium_level = npk_t_h_values['potassium'],
+            temperature = npk_t_h_values['temperature'],
         )
 
         return JsonResponse({'message': f'Objects created successfully {npk_obj}'}, status=200)
