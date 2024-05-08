@@ -15,51 +15,26 @@ void setup() {
 
 void loop() {
   // Test servo movement
-  for (int angle = 0; angle <= 180; angle += 5) {
-    servo1.write(angle); // Move servo1 to specified angle
-    delay(100);
-  }
-
-  for (int angle = 180; angle >= 0; angle -= 5) {
-    servo2.write(angle); // Move servo2 to specified angle
-    delay(100);
-  }
-
+  testServo(servo1, 5, 100);
+  testServo(servo2, -5, 100);
   delay(1000); // Pause for 1 second
 
-  for (int angle = 0; angle <= 180; angle += 10) {
-    servo1.write(angle); // Move servo1 to specified angle
-    delay(200);
-  }
-
-  for (int angle = 180; angle >= 0; angle -= 10) {
-    servo2.write(angle); // Move servo2 to specified angle
-    delay(200);
-  }
-
+  testServo(servo1, 10, 200);
+  testServo(servo2, -10, 200);
   delay(1000); // Pause for 1 second
 
-  for (int angle = 0; angle <= 180; angle += 20) {
-    servo1.write(angle); // Move servo1 to specified angle
-    delay(300);
-  }
-
-  for (int angle = 180; angle >= 0; angle -= 20) {
-    servo2.write(angle); // Move servo2 to specified angle
-    delay(300);
-  }
-
+  testServo(servo1, 20, 300);
+  testServo(servo2, -20, 300);
   delay(1000); // Pause for 1 second
 
-  for (int angle = 0; angle <= 180; angle += 30) {
-    servo1.write(angle); // Move servo1 to specified angle
-    delay(400);
-  }
-
-  for (int angle = 180; angle >= 0; angle -= 30) {
-    servo2.write(angle); // Move servo2 to specified angle
-    delay(400);
-  }
-
+  testServo(servo1, 30, 400);
+  testServo(servo2, -30, 400);
   delay(1000); // Pause for 1 second
+}
+
+void testServo(Servo servo, int stepSize, int delayTime) {
+  for (int angle = 0; angle <= 180; angle += stepSize) {
+    servo.write(angle); // Move servo to specified angle
+    delay(delayTime);
+  }
 }
